@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -70,7 +71,7 @@ class _ParentWidgetState extends State<ParentWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return TapboxB(
+    return TapboxC(
       active: _active,
       onChanged: _handleTapboxChanged,
     );
@@ -81,7 +82,7 @@ class TapboxB extends StatelessWidget {
   final active;
   final ValueChanged<bool> onChanged;
 
-  const TapboxB({Key key, this.active:false, @required this.onChanged})
+  const TapboxB({Key key, this.active: false, @required this.onChanged})
       : super(key: key);
 
   @override
@@ -95,6 +96,60 @@ class TapboxB extends StatelessWidget {
         child: Center(
           child: Text(active ? "Active" : "Inactive",
               style: TextStyle(color: Colors.white, fontSize: 32.0)),
+        ),
+      ),
+    );
+  }
+}
+
+class TapboxC extends StatefulWidget {
+  final active;
+  final ValueChanged<bool> onChanged;
+
+  const TapboxC({Key key, this.active: false, @required this.onChanged})
+      : super(key: key);
+
+  @override
+  _TapboxCState createState() => _TapboxCState();
+}
+
+class _TapboxCState extends State<TapboxC> {
+  bool _highlight = false;
+  void _handleTapUp(TapUpDetails details) {
+    setState(() {
+      _highlight = false;
+    });
+  }
+
+  void _handleTapDown(TapDownDetails details) {
+    setState(() {
+      _highlight = true;
+    });
+  }
+
+  void _handleTapCancel() {
+    setState(() {
+      _highlight = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: _handleTapDown,
+      onTapUp: _handleTapUp,
+      onTapCancel: _handleTapCancel,
+      onTap: () => widget.onChanged(!widget.active),
+      child: Container(
+        width: 200,
+        height: 200,
+        child: Center(
+          child: Text(widget.active ? "Active" : "Inactive",
+              style: TextStyle(color: Colors.white, fontSize: 32.0)),
+        ),
+        decoration: BoxDecoration(
+          color: widget.active ? Colors.green : Colors.grey,
+          border: _highlight ? Border.all(color: Colors.teal[700],width: 10) : null,
         ),
       ),
     );
